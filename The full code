@@ -1,0 +1,397 @@
+from datetime import datetime
+
+# ==================== Class Definitions ====================
+
+class Guest:
+    """Represents a guest staying at the hotel."""
+
+    def __init__(self, guest_id, name, contact):
+        """
+        Initialize a Guest object.
+
+        guest_id: Unique identifier for the guest.
+        name: Name of the guest.
+        contact: Contact information of the guest.
+        """
+        self._guest_id = guest_id  # Private attribute
+        self._name = name          # Private attribute
+        self._contact = contact    # Private attribute
+        self._loyalty_points = 0   # Private attribute, default value
+
+    # Getter methods
+    def get_guest_id(self):
+        """Return the guest's ID."""
+        return self._guest_id
+
+    def get_name(self):
+        """Return the guest's name."""
+        return self._name
+
+    def get_contact(self):
+        """Return the guest's contact information."""
+        return self._contact
+
+    def get_loyalty_points(self):
+        """Return the guest's loyalty points."""
+        return self._loyalty_points
+
+    # Setter methods
+    def set_name(self, name):
+        """Set the guest's name."""
+        self._name = name
+
+    def set_contact(self, contact):
+        """Set the guest's contact information."""
+        self._contact = contact
+
+    def add_loyalty_points(self, points):
+        """Add loyalty points to the guest's account."""
+        try:
+            if points < 0:
+                raise ValueError("Loyalty points cannot be negative.")
+            self._loyalty_points += points
+        except ValueError as e:
+            print(f"Error: {e}")
+
+    def __str__(self):
+        """Return a string representation of the guest."""
+        return (f"Guest ID: {self._guest_id}, Name: {self._name}, "
+                f"Contact: {self._contact}, Loyalty Points: {self._loyalty_points}")
+
+
+class Room:
+    """Represents a room in the hotel."""
+
+    def __init__(self, room_id, room_type, amenities, price_per_night):
+        """
+        Initialize a Room object.
+
+        room_id: Unique identifier for the room.
+        room_type: Type of the room (e.g., single, double, suite).
+        amenities: List of amenities in the room.
+        price_per_night: Price per night for the room.
+        """
+        self._room_id = room_id            # Private attribute
+        self._room_type = room_type        # Private attribute
+        self._amenities = amenities        # Private attribute
+        self._price_per_night = price_per_night  # Private attribute
+        self._is_available = True          # Private attribute, default value
+
+    # Getter methods
+    def get_room_id(self):
+        """Return the room's ID."""
+        return self._room_id
+
+    def get_room_type(self):
+        """Return the room's type."""
+        return self._room_type
+
+    def get_amenities(self):
+        """Return the room's amenities."""
+        return self._amenities
+
+    def get_price_per_night(self):
+        """Return the room's price per night."""
+        return self._price_per_night
+
+    def is_available(self):
+        """Return the room's availability status."""
+        return self._is_available
+
+    # Setter methods
+    def set_availability(self, status):
+        """Set the room's availability status."""
+        try:
+            if not isinstance(status, bool):
+                raise ValueError("Availability status must be a boolean (True or False).")
+            self._is_available = status
+        except ValueError as e:
+            print(f"Error: {e}")
+
+    def __str__(self):
+        """Return a string representation of the room."""
+        return (f"Room ID: {self._room_id}, Type: {self._room_type}, "
+                f"Amenities: {', '.join(self._amenities)}, "
+                f"Price per Night: ${self._price_per_night}, "
+                f"Available: {self._is_available}")
+
+
+class Booking:
+    """Represents a booking made by a guest."""
+
+    def __init__(self, booking_id, guest, room, check_in_date, check_out_date):
+        """
+        Initialize a Booking object.
+
+        booking_id: Unique identifier for the booking.
+        guest: Guest object making the booking.
+        room: Room object being booked.
+        check_in_date: Check-in date for the booking.
+        check_out_date: Check-out date for the booking.
+        """
+        self._booking_id = booking_id      # Private attribute
+        self._guest = guest                # Private attribute
+        self._room = room                  # Private attribute
+        self._check_in_date = check_in_date  # Private attribute
+        self._check_out_date = check_out_date  # Private attribute
+        self._total_cost = self.calculate_total_cost()  # Private attribute
+
+    # Getter methods
+    def get_booking_id(self):
+        """Return the booking's ID."""
+        return self._booking_id
+
+    def get_guest(self):
+        """Return the guest associated with the booking."""
+        return self._guest
+
+    def get_room(self):
+        """Return the room associated with the booking."""
+        return self._room
+
+    def get_total_cost(self):
+        """Return the total cost of the booking."""
+        return self._total_cost
+
+    # Helper method
+    def calculate_total_cost(self):
+        """Calculate the total cost of the booking."""
+        try:
+            if not self._room.is_available():
+                raise ValueError("Room is not available for booking.")
+            nights = (self._check_out_date - self._check_in_date).days
+            return nights * self._room.get_price_per_night()
+        except ValueError as e:
+            print(f"Error: {e}")
+            return 0
+
+    def __str__(self):
+        """Return a string representation of the booking."""
+        return (f"Booking ID: {self._booking_id}, Guest: {self._guest.get_name()}, "
+                f"Room: {self._room.get_room_type()}, "
+                f"Check-In: {self._check_in_date}, Check-Out: {self._check_out_date}, "
+                f"Total Cost: ${self._total_cost}")
+
+
+class Invoice:
+    """Represents an invoice for a booking."""
+
+    def __init__(self, invoice_id, booking, payment_method):
+        """
+        Initialize an Invoice object.
+
+        invoice_id: Unique identifier for the invoice.
+        booking: Booking object associated with the invoice.
+        payment_method: Payment method used for the invoice.
+        """
+        self._invoice_id = invoice_id      # Private attribute
+        self._booking = booking            # Private attribute
+        self._payment_method = payment_method  # Private attribute
+
+    # Getter methods
+    def get_invoice_id(self):
+        """Return the invoice's ID."""
+        return self._invoice_id
+
+    def get_booking(self):
+        """Return the booking associated with the invoice."""
+        return self._booking
+
+    def get_payment_method(self):
+        """Return the payment method used for the invoice."""
+        return self._payment_method
+
+    def __str__(self):
+        """Return a string representation of the invoice."""
+        return (f"Invoice ID: {self._invoice_id}, "
+                f"Booking ID: {self._booking.get_booking_id()}, "
+                f"Total Cost: ${self._booking.get_total_cost()}, "
+                f"Payment Method: {self._payment_method}")
+
+
+class LoyaltyProgram:
+    """Represents the loyalty rewards program for guests."""
+
+    def __init__(self, program_id, guest):
+        """
+        Initialize a LoyaltyProgram object.
+
+        program_id: Unique identifier for the loyalty program.
+        guest: Guest object associated with the loyalty program.
+        """
+        self._program_id = program_id      # Private attribute
+        self._guest = guest                # Private attribute
+        self._points = 0                   # Private attribute, default value
+
+    # Getter methods
+    def get_program_id(self):
+        """Return the loyalty program's ID."""
+        return self._program_id
+
+    def get_points(self):
+        """Return the loyalty points earned by the guest."""
+        return self._points
+
+    # Setter methods
+    def earn_points(self, points):
+        """Add loyalty points to the guest's account."""
+        try:
+            if points < 0:
+                raise ValueError("Loyalty points cannot be negative.")
+            self._points += points
+            self._guest.add_loyalty_points(points)
+        except ValueError as e:
+            print(f"Error: {e}")
+
+    def __str__(self):
+        """Return a string representation of the loyalty program."""
+        return (f"Loyalty Program ID: {self._program_id}, "
+                f"Guest: {self._guest.get_name()}, "
+                f"Points: {self._points}")
+
+
+class Feedback:
+    """Represents feedback provided by a guest after their stay."""
+
+    def __init__(self, feedback_id, guest, rating, comments):
+        """
+        Initialize a Feedback object.
+
+        feedback_id: Unique identifier for the feedback.
+        guest: Guest object providing the feedback.
+        rating: Rating given by the guest (1 to 5).
+        comments: Comments provided by the guest.
+        """
+        self._feedback_id = feedback_id    # Private attribute
+        self._guest = guest                # Private attribute
+        self._rating = rating              # Private attribute
+        self._comments = comments          # Private attribute
+
+    # Getter methods
+    def get_feedback_id(self):
+        """Return the feedback's ID."""
+        return self._feedback_id
+
+    def get_rating(self):
+        """Return the rating provided by the guest."""
+        return self._rating
+
+    def get_comments(self):
+        """Return the comments provided by the guest."""
+        return self._comments
+
+    # Setter methods
+    def set_rating(self, rating):
+        """Set the rating provided by the guest."""
+        try:
+            if not 1 <= rating <= 5:
+                raise ValueError("Rating must be between 1 and 5.")
+            self._rating = rating
+        except ValueError as e:
+            print(f"Error: {e}")
+
+    def __str__(self):
+        """Return a string representation of the feedback."""
+        return (f"Feedback ID: {self._feedback_id}, "
+                f"Guest: {self._guest.get_name()}, "
+                f"Rating: {self._rating}, Comments: {self._comments}")
+
+
+class GuestService:
+    """Represents additional services requested by guests."""
+
+    def __init__(self, service_id, service_type, request_time):
+        """
+        Initialize a GuestService object.
+
+        service_id: Unique identifier for the service.
+        service_type: Type of service requested (e.g., housekeeping, room service).
+        request_time: Time when the service was requested.
+        """
+        self._service_id = service_id      # Private attribute
+        self._service_type = service_type  # Private attribute
+        self._request_time = request_time  # Private attribute
+        self._status = "Pending"           # Private attribute, default value
+
+    # Getter methods
+    def get_service_id(self):
+        """Return the service's ID."""
+        return self._service_id
+
+    def get_service_type(self):
+        """Return the type of service requested."""
+        return self._service_type
+
+    def get_status(self):
+        """Return the status of the service."""
+        return self._status
+
+    # Setter methods
+    def set_status(self, status):
+        """Set the status of the service."""
+        try:
+            if status not in ["Pending", "In Progress", "Completed"]:
+                raise ValueError("Invalid status. Must be 'Pending', 'In Progress', or 'Completed'.")
+            self._status = status
+        except ValueError as e:
+            print(f"Error: {e}")
+
+    def __str__(self):
+        """Return a string representation of the service."""
+        return (f"Service ID: {self._service_id}, "
+                f"Type: {self._service_type}, "
+                f"Request Time: {self._request_time}, "
+                f"Status: {self._status}")
+
+
+# ==================== Main Program ====================
+
+if __name__ == "__main__":
+    try:
+        # Create a guest
+        guest1 = Guest(1, "Shaikha Alkaabi", "Shaikha.j2005@gmail.com")
+        print("Guest Details:")
+        print(guest1)
+        print()
+
+        # Create a room
+        room1 = Room(101, "Double", ["Wi-Fi", "TV"], 120.0)
+        print("Room Details:")
+        print(room1)
+        print()
+
+        # Create a booking
+        check_in = datetime(2023, 5, 15)  # Check-in date: May 15, 2023
+        check_out = datetime(2023, 5, 20)  # Check-out date: May 20, 2023
+        booking1 = Booking(1, guest1, room1, check_in, check_out)
+        print("Booking Details:")
+        print(booking1)
+        print()
+
+        # Create an invoice
+        invoice1 = Invoice(1, booking1, "Credit Card")
+        print("Invoice Details:")
+        print(invoice1)
+        print()
+
+        # Add loyalty points
+        loyalty_program1 = LoyaltyProgram(1, guest1)
+        loyalty_program1.earn_points(100)  # Add 100 loyalty points
+        print("Loyalty Program Details:")
+        print(loyalty_program1)
+        print()
+
+        # Submit feedback
+        feedback1 = Feedback(1, guest1, 5, "Excellent stay. I loved it.")
+        print("Feedback Details:")
+        print(feedback1)
+        print()
+
+        # Request guest service
+        service1 = GuestService(1, "Housekeeping", datetime.now())
+        service1.set_status("In Progress")  # Update service status
+        print("Guest Service Details:")
+        print(service1)
+
+    except Exception as e:
+        print(f"An error occurred: {e}")
