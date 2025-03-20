@@ -1,7 +1,5 @@
 from datetime import datetime
 
-# ==================== Class Definitions ====================
-
 class Guest:
     """Represents a guest staying at the hotel."""
 
@@ -344,7 +342,7 @@ class GuestService:
                 f"Status: {self._status}")
 
 
-# ==================== Main Program ====================
+# Main Program 
 
 if __name__ == "__main__":
     try:
@@ -355,7 +353,7 @@ if __name__ == "__main__":
         print()
 
         # Create a room
-        room1 = Room(101, "Double", ["Wi-Fi", "TV"], 120.0)
+        room1 = Room(101, "Double", ["Free Breakfast", "Swimming Pool"], 120.0)
         print("Room Details:")
         print(room1)
         print()
