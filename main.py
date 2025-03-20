@@ -18,7 +18,7 @@ if __name__ == "__main__":
         print()
 
         # Create a room
-        room1 = Room(101, "Double", ["Wi-Fi", "TV"], 120.0)
+        room1 = Room(101, "Double", ["Free Breakfast", "Swimming Pool"], 120.0)
         print("Room Details:")
         print(room1)
         print()
